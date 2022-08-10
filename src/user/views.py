@@ -11,7 +11,7 @@ from django.template import Context
 
 
 def index(request):
-    return render(request, 'user/index.html', {'title':'index'})
+    return render(request, 'user/index.html', {'title': 'index'})
 
 
 def register(request):
@@ -22,7 +22,7 @@ def register(request):
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             htmly = get_template('user/Email.html')
-            d = { 'username': username }
+            d = {'username': username}
             subject, from_email, to = 'welcome', 'your_email@gmail.com', email
             html_content = htmly.render(d)
             msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
@@ -32,14 +32,14 @@ def register(request):
             return redirect('login')
     else:
         form = UserRegisterForm()
-    return render(request, 'user/register.html', {'form': form, 'title':'reqister here'})
+    return render(request, 'user/register.html', {'form': form, 'title': 'reqister here'})
 
 
 def Login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(request, username=username, password = password)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             form = login(request, user)
             messages.success(request, f' welcome {username} !!')
@@ -47,4 +47,4 @@ def Login(request):
         else:
             messages.info(request, f'account done not exit plz sign in')
     form = AuthenticationForm()
-    return render(request, 'user/login.html', {'form':form, 'title':'log in'})
+    return render(request, 'user/login.html', {'form': form, 'title': 'log in'})
