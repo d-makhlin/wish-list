@@ -18,10 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from user import views as user_view
+from wishes import views as wishes_view
 from django.contrib.auth import views as auth
 
 
 router = DefaultRouter(trailing_slash=True)
+router.register('wishes/wish-list', wishes_view.WishListView, 'wishes-wish-list')
+router.register('wishes/wish-item', wishes_view.WishItemView, 'wishes-wish-item')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
