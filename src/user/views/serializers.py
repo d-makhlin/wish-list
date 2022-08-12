@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from user.constants import UserFriendshipState
+from user.models import User
 from user.models.userfriendship import UserFriendship
 
 
@@ -16,3 +17,13 @@ class UserFriendCreateSerializer(serializers.Serializer):
 
 class UserFriendSerializerList(serializers.Serializer):
     state = serializers.ChoiceField(choices=UserFriendshipState)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name')
+
+
+class UserFindSerializer(serializers.Serializer):
+    pattern = serializers.CharField(required=True)
