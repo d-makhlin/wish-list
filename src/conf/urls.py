@@ -26,6 +26,7 @@ router = DefaultRouter(trailing_slash=True)
 router.register('wishes/wish-list', wishes_view.WishListView, 'wishes-wish-list')
 router.register('wishes/wish-item', wishes_view.WishItemView, 'wishes-wish-item')
 router.register('user/friendship', user_view.UserFriendshipView, 'user-friendship')
+router.register('user/users', user_view.UserView, 'user-users')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
