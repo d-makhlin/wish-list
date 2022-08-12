@@ -25,6 +25,7 @@ from django.contrib.auth import views as auth
 router = DefaultRouter(trailing_slash=True)
 router.register('wishes/wish-list', wishes_view.WishListView, 'wishes-wish-list')
 router.register('wishes/wish-item', wishes_view.WishItemView, 'wishes-wish-item')
+router.register('user/friendship', user_view.UserFriendshipView, 'user-friendship')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

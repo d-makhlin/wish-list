@@ -6,8 +6,8 @@ from user.constants import UserFriendshipState
 
 
 class UserFriendship(UUIDModel, CreateDateModel, ModifyDateModel):
-    sender = models.ForeignKey('user.User', models.CASCADE)
-    receiver = models.ForeignKey('user.User', models.CASCADE)
+    sender = models.ForeignKey('user.User', models.CASCADE, related_name='receivers')
+    receiver = models.ForeignKey('user.User', models.CASCADE, related_name='senders')
     state = EnumField(UserFriendshipState, default=UserFriendshipState.REQUESTED)
 
     class Meta:

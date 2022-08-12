@@ -2,6 +2,7 @@ from typing import Any
 from uuid import UUID
 
 from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -27,6 +28,9 @@ class UserFriendshipView(ModelViewSet):
         serializer = UserFriendCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
+
+        if request.user.id == validated_data['receiver_id']:
+            return Response(status=status.HTTP_400_BAD_REQUEST) # ToDo implement errors
 
         user_friendship = UserFriendshipService.create_user_friendship(
             sender=User.objects.get(pk=request.user.id),
