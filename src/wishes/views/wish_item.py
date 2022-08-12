@@ -2,14 +2,16 @@ from typing import Any
 
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from user.models import User
 from user.services.user_friendship_service import UserFriendshipService
 from wishes.models import WishItem, WishList
 from wishes.services.wish_item_service import WishItemService
-from wishes.views.serializers import WishItemSerializer, WishItemCreateSerializer
+from wishes.views.serializers import WishItemSerializer, WishItemCreateSerializer, WishItemMarkToGiftSerializer
 
 
 class WishItemView(ModelViewSet):
@@ -43,4 +45,22 @@ class WishItemView(ModelViewSet):
         serializer = self.serializer_class(wish_item, context={'is_owner': True})
         return Response(serializer.data)
 
+    @action(methods=('post',), detail=True, url_path='mark-to-gift')
+    def mark_to_gift(self, request: Request, pk: str) -> Response:
+        serializer = WishItemMarkToGiftSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
 
+        item = get_object_or_404(self.queryset, pk=pk)
+        user = get_object_or_404(User, pk=request.user.id)
+        return (
+            Response(status=status.HTTP_200_OK)
+            if WishItemService.mark_to_gift(item, user, validated_data['show_gifter_name'])
+            else Response(status=status.HTTP_400_BAD_REQUEST)
+        )
+
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        serializer = self.serializer_class(
+            WishItemService.get_items_to_gift(request.user.id), context={'is_owner': False}, many=True
+        )
+        return Response(serializer.data)

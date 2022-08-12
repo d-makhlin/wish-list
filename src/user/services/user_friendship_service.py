@@ -24,7 +24,7 @@ class UserFriendshipService:
         # ToDo raise error if already blocked
 
     @classmethod
-    def get_user_friendships_by_state(cls, user_id: User, state: UserFriendshipState) -> QuerySet[UserFriendship]:
+    def get_user_friendships_by_state(cls, user_id: str, state: UserFriendshipState) -> QuerySet[UserFriendship]:
         if state in (UserFriendshipState.REQUESTED, UserFriendshipState.BLOCKED):
             return UserFriendship.objects.filter(sender_id=user_id, state=state)
         return UserFriendship.objects.filter(state=state).filter(Q(sender_id=user_id) | Q(receiver_id=user_id))
@@ -55,3 +55,8 @@ class UserFriendshipService:
             .filter(Q(sender_id=user_1_id, receiver_id=user_2_id) | Q(sender_id=user_2_id, receiver_id=user_1_id))
             .exists()
         )
+
+    @classmethod
+    def notify_friends(cls, user_id: str) -> None:
+        friendships = cls.get_user_friendships_by_state(user_id, UserFriendshipState.ACCEPTED).values('sender_id', 'receiver_id')
+        cls.notify([f['sender_id'] if f['sender_id'] != user_id else f['receiver_id'] for f in friendships])
