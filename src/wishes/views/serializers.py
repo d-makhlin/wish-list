@@ -49,3 +49,7 @@ class WishListSerializerRaw(serializers.ModelSerializer):
     class Meta:
         model = WishList
         fields = ('id', 'name', 'owner_id',)
+
+
+class WishItemMarkToGiftSerializer(serializers.Serializer):
+    show_gifter_name = serializers.BooleanField(required=True)

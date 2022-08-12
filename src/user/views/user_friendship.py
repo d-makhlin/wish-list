@@ -30,7 +30,7 @@ class UserFriendshipView(ModelViewSet):
         validated_data = serializer.validated_data
 
         if request.user.id == validated_data['receiver_id']:
-            return Response(status=status.HTTP_400_BAD_REQUEST) # ToDo implement errors
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # ToDo implement errors
 
         user_friendship = UserFriendshipService.create_user_friendship(
             sender=User.objects.get(pk=request.user.id),
