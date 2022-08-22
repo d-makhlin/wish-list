@@ -9,6 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from user.forms import UserRegisterForm
 from django.core.mail import EmailMultiAlternatives
@@ -60,12 +61,13 @@ def Login(request):
 
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 100
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
 
 class UserView(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = StandardResultsSetPagination
