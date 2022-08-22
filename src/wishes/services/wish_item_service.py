@@ -10,9 +10,9 @@ from wishes.models import WishItem, WishList
 
 
 class WishItemService:
-    @classmethod
+    @staticmethod
     def create_wish_item(
-        cls, wish_list: WishList, name: str, comment: Optional[str], due_date: Optional[datetime.date]
+        wish_list: WishList, name: str, comment: Optional[str], due_date: Optional[datetime.date]
     ) -> WishItem:
         if due_date:
             # call celery task
@@ -25,8 +25,8 @@ class WishItemService:
         )
         return item
 
-    @classmethod
-    def mark_to_gift(cls, wish_item: WishItem, user: User, show_name: bool) -> bool:
+    @staticmethod
+    def mark_to_gift(wish_item: WishItem, user: User, show_name: bool) -> bool:
         if wish_item.state != WishItemStatus.OPEN:
             return False  # item is unavailable
 
@@ -40,8 +40,8 @@ class WishItemService:
         UserFriendshipService.notify_friends(wish_item.list.owner_id)
         return True
 
-    @classmethod
-    def get_items_to_gift(cls, user_id: str) -> QuerySet[WishItem]:
+    @staticmethod
+    def get_items_to_gift(user_id: str) -> QuerySet[WishItem]:
         return WishItem.objects.filter(
             to_be_gifted_by_id=user_id, state__in=(WishItemStatus.BOOKED_TO_GIFT, WishItemStatus.GIFTED)
         )

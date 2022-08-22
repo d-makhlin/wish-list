@@ -42,7 +42,7 @@ class WishListCreateSerializer(serializers.Serializer):
 
 
 class WishListSerializerList(serializers.Serializer):
-    owner_id = serializers.CharField(required=True)
+    owner_id = serializers.UUIDField(required=True)
 
 
 class WishListSerializerRaw(serializers.ModelSerializer):

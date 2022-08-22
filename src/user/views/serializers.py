@@ -12,7 +12,7 @@ class UserFriendSerializer(serializers.ModelSerializer):
 
 
 class UserFriendCreateSerializer(serializers.Serializer):
-    receiver_id = serializers.CharField(required=True)
+    receiver_id = serializers.UUIDField(required=True)
 
 
 class UserFriendSerializerList(serializers.Serializer):
