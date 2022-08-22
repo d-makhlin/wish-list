@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from user.models import User
 from user.services.user_friendship_service import UserFriendshipService
@@ -14,6 +15,7 @@ from wishes.views.serializers import WishListCreateSerializer, WishListSerialize
 
 
 class WishListView(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = WishListSerializer
     queryset = WishList.objects.all()
 

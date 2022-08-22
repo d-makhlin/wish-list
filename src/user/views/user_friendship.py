@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from user.constants import UserFriendshipState
 from user.models import User
@@ -16,6 +17,7 @@ from user.views.serializers import UserFriendSerializer, UserFriendCreateSeriali
 
 
 class UserFriendshipView(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = UserFriendSerializer
     queryset = UserFriendship.objects.all()
 
