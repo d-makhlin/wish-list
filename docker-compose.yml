@@ -10,7 +10,17 @@ services:
     ports:
       - '5432:5432'
     volumes: 
-      - db:/var/lib/postgresql/data
-volumes:
-  db:
-    driver: local
+      - ./data/db:/var/lib/postgresql/data
+  web:
+    build: .
+    command: python src/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=wish-list
+      - POSTGRES_USER=wish-list
+      - POSTGRES_PASSWORD=notsecretpass
+    depends_on:
+      - db
