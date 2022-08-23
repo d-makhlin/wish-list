@@ -74,7 +74,7 @@ class UserView(ModelViewSet):
 
     @action(methods=('get',), detail=False, url_path='find-user')
     def find_user(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer = UserFindSerializer(data=request.data)
+        serializer = UserFindSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
