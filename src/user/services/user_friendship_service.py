@@ -1,6 +1,7 @@
 from typing import List
 
 from django.db.models import QuerySet, Q
+from common.notification_service import NotificationService, NotificationType
 
 from user.constants import UserFriendshipState
 from user.models import User
@@ -23,7 +24,7 @@ class UserFriendshipService:
                 existing.receiver = receiver
             existing.state = UserFriendshipState.REQUESTED
             existing.save()
-            cls.notify([sender.id, receiver.id])
+            NotificationService.notify([sender.id, receiver.id], NotificationType.USER_FRIENDSHIP_UPDATED)
             return existing
         # ToDo raise error if already blocked
 
@@ -34,22 +35,17 @@ class UserFriendshipService:
         return UserFriendship.objects.filter(state=state).filter(Q(sender_id=user_id) | Q(receiver_id=user_id))
 
     @classmethod
-    def notify(cls, users_ids: List[str]) -> None:
-        # ToDo implement notifications
-        pass
-
-    @classmethod
     def accept_friendship_request(cls, user_friendship: UserFriendship) -> UserFriendship:
         user_friendship.state = UserFriendshipState.ACCEPTED
         user_friendship.save()
-        cls.notify([user_friendship.sender_id, user_friendship.receiver_id])
+        NotificationService.notify([user_friendship.sender_id, user_friendship.receiver_id], NotificationType.USER_FRIENDSHIP_UPDATED)
         return user_friendship
 
     @classmethod
     def reject_friendship_request(cls, user_friendship: UserFriendship) -> UserFriendship:
         user_friendship.state = UserFriendshipState.REJECTED
         user_friendship.save()
-        cls.notify([user_friendship.receiver_id])
+        NotificationService.notify([user_friendship.receiver_id], NotificationType.USER_FRIENDSHIP_UPDATED)
         return user_friendship
 
     @staticmethod
@@ -61,6 +57,7 @@ class UserFriendshipService:
         )
 
     @classmethod
-    def notify_friends(cls, user_id: str) -> None:
+    def notify_friends(cls, user_id: str, notification_type: NotificationType) -> None:
         friendships = cls.get_user_friendships_by_state(user_id, UserFriendshipState.ACCEPTED).values('sender_id', 'receiver_id')
-        cls.notify([f['sender_id'] if f['sender_id'] != user_id else f['receiver_id'] for f in friendships])
+        NotificationService.notify(
+            [f['sender_id'] if f['sender_id'] != user_id else f['receiver_id'] for f in friendships], notification_type)
