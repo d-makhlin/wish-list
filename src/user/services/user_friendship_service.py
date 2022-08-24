@@ -10,13 +10,17 @@ from user.models.userfriendship import UserFriendship
 class UserFriendshipService:
     @classmethod
     def create_user_friendship(cls, sender, receiver: User) -> UserFriendship:
-        existing = UserFriendship.objects.filter(sender_id=sender.id, receiver_id=receiver.id).first()
+        existing = UserFriendship.objects.filter(
+            Q(sender_id=sender.id, receiver_id=receiver.id) | Q(receiver_id=sender.id, sender_id=receiver.id)).first()
         if not existing:
             return UserFriendship.objects.create(sender=sender, receiver=receiver)
 
         if existing.state in (UserFriendshipState.REQUESTED, UserFriendshipState.ACCEPTED):
             return existing
         if existing.state == UserFriendshipState.REJECTED:
+            if existing.sender_id == receiver.id:
+                existing.sender = sender
+                existing.receiver = receiver
             existing.state = UserFriendshipState.REQUESTED
             existing.save()
             cls.notify([sender.id, receiver.id])

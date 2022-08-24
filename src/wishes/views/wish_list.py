@@ -40,7 +40,7 @@ class WishListView(ModelViewSet):
         return Response(serializer.data)
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer = WishListSerializerList(data=request.data)
+        serializer = WishListSerializerList(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 

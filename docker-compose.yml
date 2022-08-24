@@ -22,5 +22,6 @@ services:
       - POSTGRES_NAME=wish-list
       - POSTGRES_USER=wish-list
       - POSTGRES_PASSWORD=notsecretpass
+      - POSTGRES_HOST=db
     depends_on:
       - db
