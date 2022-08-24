@@ -2,6 +2,7 @@ import datetime
 from typing import Optional
 
 from django.db.models import QuerySet
+from common.notification_service import NotificationType
 
 from user.models import User
 from user.services.user_friendship_service import UserFriendshipService
@@ -37,7 +38,7 @@ class WishItemService:
         wish_item.show_gifter_name = show_name
         wish_item.state = WishItemStatus.BOOKED_TO_GIFT
         wish_item.save()
-        UserFriendshipService.notify_friends(wish_item.list.owner_id)
+        UserFriendshipService.notify_friends(wish_item.list.owner_id, NotificationType.WISH_ITEM_UPDATED)
         return True
 
     @staticmethod
