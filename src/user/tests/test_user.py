@@ -7,7 +7,7 @@ from .factory import UserFactory
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize('pattern, result', [('user', 3)])
+@pytest.mark.parametrize('pattern, result', [('user', 3), ('3', 1), ('U', 0), ('t', 0)])
 def test_find_user(pattern, result):
     user_1 = UserFactory(username='user_1')
     UserFactory(username='user_2')

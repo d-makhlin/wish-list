@@ -23,7 +23,7 @@ class WishItemView(ModelViewSet):
     def retrieve(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         wish_item = self.get_object()
         is_owner = request.user.id == wish_item.list.owner_id
-        if not is_owner and not UserFriendshipService.is_in_friendship(request.user.id, wish_item.wish_list.owner_id):
+        if not is_owner and not UserFriendshipService.is_in_friendship(request.user.id, wish_item.list.owner_id):
             return Response(status=status.HTTP_400_BAD_REQUEST)  # ToDo raise exception
 
         serializer = self.serializer_class(wish_item, context={'is_owner': is_owner})
@@ -36,7 +36,7 @@ class WishItemView(ModelViewSet):
 
         wish_list = get_object_or_404(WishList, pk=validated_data.get('list_id'))
         if wish_list.owner_id != request.user.id:
-            return Response({'detail: invalid user'})  # ToDo raise exception
+            return Response({'detail: invalid user'}, status=status.HTTP_400_BAD_REQUEST)  # ToDo raise exception
 
         wish_item = WishItemService.create_wish_item(
             wish_list=wish_list,

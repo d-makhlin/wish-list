@@ -42,7 +42,7 @@ class UserFriendshipView(ModelViewSet):
         return Response(serializer.data)
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer = UserFriendSerializerList(data=request.data)
+        serializer = UserFriendSerializerList(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
