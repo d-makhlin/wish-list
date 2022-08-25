@@ -88,3 +88,16 @@ def test_wish_list__list_friend(user):
     client.force_authenticate(user=user)
     response = client.get('/api/wishes/wish-list/', {'owner_id': other_user.id}, format='json')
     assert len(response.data) == 2
+
+
+@pytest.mark.django_db
+def test_wish_list__update(user):
+    client = APIClient()
+    client.force_authenticate(user=user)
+
+    wish_list = WishListFactory(owner=user, name='list-1')
+
+    response = client.put(f'/api/wishes/wish-list/{wish_list.id}/', data={'name': 'item-2'}, format='json')
+    assert response.data['name'] == 'item-2'
+    wish_list.refresh_from_db()
+    assert wish_list.name == 'item-2'

@@ -1,3 +1,4 @@
+from cgitb import reset
 from typing import Any
 
 from django.shortcuts import get_object_or_404
@@ -7,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+from src.wishes.views.serializers import WishItemUpdateSerializer
 
 from user.models import User
 from user.services.user_friendship_service import UserFriendshipService
@@ -46,6 +48,16 @@ class WishItemView(ModelViewSet):
         )
         serializer = self.serializer_class(wish_item, context={'is_owner': True})
         return Response(serializer.data)
+
+    def update(self, request: Request, pk: str) -> Response:
+        instance: WishItem = get_object_or_404(self.queryset, pk=pk)
+        if instance.list.owner_id != request.user.id:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = WishItemUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.update(instance, serializer.validated_data)
+        instance: WishItem = get_object_or_404(self.queryset, pk=pk)
+        return Response(data=self.serializer_class(instance, context={'is_owner': True}).data)
 
     @action(methods=('post',), detail=True, url_path='mark-to-gift')
     def mark_to_gift(self, request: Request, pk: str) -> Response:

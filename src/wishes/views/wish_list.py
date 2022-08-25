@@ -1,10 +1,12 @@
 from typing import Any
 
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+from src.wishes.views.serializers import WishListUpdateSerializer
 
 from user.models import User
 from user.services.user_friendship_service import UserFriendshipService
@@ -38,6 +40,16 @@ class WishListView(ModelViewSet):
         )
         serializer = self.serializer_class(wish_list)
         return Response(serializer.data)
+
+    def update(self, request: Request, pk: str) -> Response:
+        instance: WishList = get_object_or_404(self.queryset, pk=pk)
+        if instance.owner_id != request.user.id:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = WishListUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.update(instance, serializer.validated_data)
+        instance: WishList = get_object_or_404(self.queryset, pk=pk)
+        return Response(data=self.serializer_class(instance).data)
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = WishListSerializerList(data=request.query_params)

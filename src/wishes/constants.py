@@ -8,3 +8,4 @@ class WishItemStatus(StrEnum):
     OPEN = 'OPEN'
     BOOKED_TO_GIFT = 'BOOKED_TO_GIFT'
     GIFTED = 'GIFTED'
+    OUTDATED = 'OUTDATED'
