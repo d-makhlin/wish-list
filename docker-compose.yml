@@ -44,6 +44,10 @@ services:
     environment:
       - REDIS_HOST=redis
       - KAFKA_HOST=kafka
+      - POSTGRES_NAME=wish-list
+      - POSTGRES_USER=wish-list
+      - POSTGRES_PASSWORD=notsecretpass
+      - POSTGRES_HOST=db
     volumes:
       - .:/code
     working_dir: /code/src
@@ -61,6 +65,10 @@ services:
     environment:
       - REDIS_HOST=redis
       - KAFKA_HOST=kafka
+      - POSTGRES_NAME=wish-list
+      - POSTGRES_USER=wish-list
+      - POSTGRES_PASSWORD=notsecretpass
+      - POSTGRES_HOST=db
     depends_on:
       - db
       - redis

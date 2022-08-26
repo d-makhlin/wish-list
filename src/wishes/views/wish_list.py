@@ -6,14 +6,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from src.wishes.views.serializers import WishListUpdateSerializer
 
 from user.models import User
 from user.services.user_friendship_service import UserFriendshipService
 from wishes.models import WishList
 from wishes.services.wish_list_service import WishListService
 from wishes.views.serializers import WishListCreateSerializer, WishListSerializer, WishListSerializerList, \
-    WishListSerializerRaw
+    WishListSerializerRaw, WishListUpdateSerializer
 
 
 class WishListView(ModelViewSet):
