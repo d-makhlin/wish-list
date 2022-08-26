@@ -12,8 +12,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from user.forms import UserRegisterForm
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
 
 from user.models import User
 from user.services.user_service import UserService
@@ -29,16 +27,6 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            htmly = get_template('user/Email.html')
-            d = {'username': username}
-            subject, from_email, to = 'welcome', 'your_email@gmail.com', email
-            html_content = htmly.render(d)
-            msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
-            messages.success(request, f'Your account has been created ! You are now able to log in')
             return redirect('login')
     else:
         form = UserRegisterForm()
