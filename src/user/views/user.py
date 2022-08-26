@@ -12,8 +12,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from user.forms import UserRegisterForm
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
 
 from user.models import User
 from user.services.user_service import UserService
