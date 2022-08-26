@@ -24,7 +24,7 @@ class UserFriendshipService:
                 existing.receiver = receiver
             existing.state = UserFriendshipState.REQUESTED
             existing.save()
-            NotificationService.notify([sender.id, receiver.id], NotificationType.USER_FRIENDSHIP_UPDATED)
+            NotificationService().notify([sender.id, receiver.id], NotificationType.USER_FRIENDSHIP_UPDATED)
             return existing
         # ToDo raise error if already blocked
 
@@ -38,14 +38,14 @@ class UserFriendshipService:
     def accept_friendship_request(cls, user_friendship: UserFriendship) -> UserFriendship:
         user_friendship.state = UserFriendshipState.ACCEPTED
         user_friendship.save()
-        NotificationService.notify([user_friendship.sender_id, user_friendship.receiver_id], NotificationType.USER_FRIENDSHIP_UPDATED)
+        NotificationService().notify([user_friendship.sender_id, user_friendship.receiver_id], NotificationType.USER_FRIENDSHIP_UPDATED)
         return user_friendship
 
     @classmethod
     def reject_friendship_request(cls, user_friendship: UserFriendship) -> UserFriendship:
         user_friendship.state = UserFriendshipState.REJECTED
         user_friendship.save()
-        NotificationService.notify([user_friendship.receiver_id], NotificationType.USER_FRIENDSHIP_UPDATED)
+        NotificationService().notify([user_friendship.receiver_id], NotificationType.USER_FRIENDSHIP_UPDATED)
         return user_friendship
 
     @staticmethod
@@ -59,5 +59,5 @@ class UserFriendshipService:
     @classmethod
     def notify_friends(cls, user_id: str, notification_type: NotificationType) -> None:
         friendships = cls.get_user_friendships_by_state(user_id, UserFriendshipState.ACCEPTED).values('sender_id', 'receiver_id')
-        NotificationService.notify(
+        NotificationService().notify(
             [f['sender_id'] if f['sender_id'] != user_id else f['receiver_id'] for f in friendships], notification_type)
