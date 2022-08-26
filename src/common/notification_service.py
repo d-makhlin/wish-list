@@ -20,23 +20,26 @@ class NotificationType(StrEnum):
 
 
 class NotificationService:
-    host = os.environ.get('KAFKA_HOST', 'localhost')
-    producer = KafkaProducer(
-        bootstrap_servers=[f'{host}:9092'], 
-        value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(NotificationService, cls).__new__(cls)
+        return cls.instance
 
-    NotificationTypeTopicMap = {
-        NotificationType.USER_FRIENDSHIP_UPDATED: KafkaTopic.GENERAL,
-        NotificationType.WISH_ITEM_UPDATED: KafkaTopic.GENERAL,
-        NotificationType.WISH_LIST_UPDATED: KafkaTopic.GENERAL,
-    }
+    def __init__(self) -> None:
+        self.host = os.environ.get('KAFKA_HOST', 'localhost')
+        self.producer = KafkaProducer(
+            bootstrap_servers=[f'{self.host}:9092'], 
+            value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+        self.NotificationTypeTopicMap = {
+            NotificationType.USER_FRIENDSHIP_UPDATED: KafkaTopic.GENERAL,
+            NotificationType.WISH_ITEM_UPDATED: KafkaTopic.GENERAL,
+            NotificationType.WISH_LIST_UPDATED: KafkaTopic.GENERAL,
+        }
 
-    @classmethod
-    def notify(cls, users_ids: List[UUID], notification_type: NotificationType, payload: Dict[Any, Any] = {}) -> None:
+    def notify(self, users_ids: List[UUID], notification_type: NotificationType, payload: Dict[Any, Any] = {}) -> None:
         for user_id in users_ids:
             message = {'client_id': str(user_id), 'type': notification_type, 'payload': payload}
-            cls._notify(cls.NotificationTypeTopicMap[notification_type], message)
+            self._notify(self.NotificationTypeTopicMap[notification_type], message)
 
-    @classmethod
-    def _notify(cls, topic: KafkaTopic, message: Dict[Any, Any]) -> None:
-        cls.producer.send(topic, message)
+    def _notify(self, topic: KafkaTopic, message: Dict[Any, Any]) -> None:
+        self.producer.send(topic, message)

@@ -52,6 +52,11 @@ class WishListCreateSerializer(serializers.Serializer):
 class WishListSerializerList(serializers.Serializer):
     owner_id = serializers.UUIDField(required=True)
 
+class WishListUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WishList
+        fields = ('name',)
+
 
 class WishListSerializerRaw(serializers.ModelSerializer):
     class Meta:
@@ -61,3 +66,9 @@ class WishListSerializerRaw(serializers.ModelSerializer):
 
 class WishItemMarkToGiftSerializer(serializers.Serializer):
     show_gifter_name = serializers.BooleanField(required=True)
+
+
+class WishItemUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WishItem
+        fields = ('id', 'name', 'state', 'due_date', 'comment')

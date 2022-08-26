@@ -32,6 +32,47 @@ services:
       KAFKA_CREATE_TOPICS: "GENERAL:1:1"
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
+
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+
+  celery:
+    build: .
+    command: celery -A celeryapp.app worker  -l INFO
+    environment:
+      - REDIS_HOST=redis
+      - KAFKA_HOST=kafka
+      - POSTGRES_NAME=wish-list
+      - POSTGRES_USER=wish-list
+      - POSTGRES_PASSWORD=notsecretpass
+      - POSTGRES_HOST=db
+    volumes:
+      - .:/code
+    working_dir: /code/src
+    depends_on:
+      - db
+      - redis
+      - kafka
+
+  celery-beat:
+    build: .
+    volumes:
+      - .:/code
+    working_dir: /code/src
+    command: celery -A celeryapp.app beat -l INFO
+    environment:
+      - REDIS_HOST=redis
+      - KAFKA_HOST=kafka
+      - POSTGRES_NAME=wish-list
+      - POSTGRES_USER=wish-list
+      - POSTGRES_PASSWORD=notsecretpass
+      - POSTGRES_HOST=db
+    depends_on:
+      - db
+      - redis
+      - kafka
   
   web:
     build: .
@@ -46,6 +87,7 @@ services:
       - POSTGRES_PASSWORD=notsecretpass
       - POSTGRES_HOST=db
       - KAFKA_HOST=kafka
+      - REDIS_HOST=redis
     depends_on:
       - db
       - kafka
