@@ -60,7 +60,7 @@ class AuthView(ModelViewSet):
             'username'), password=validated_data.get('password'))
         if user is not None:
             login(request, user)
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK, data={'user_id': user.id})
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
