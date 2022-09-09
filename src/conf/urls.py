@@ -24,18 +24,21 @@ from rest_framework_simplejwt import views as jwt_views
 
 
 router = DefaultRouter(trailing_slash=True)
-router.register('wishes/wish-list', wishes_view.WishListView, 'wishes-wish-list')
-router.register('wishes/wish-item', wishes_view.WishItemView, 'wishes-wish-item')
-router.register('user/friendship', user_view.UserFriendshipView, 'user-friendship')
+router.register('wishes/wish-list',
+                wishes_view.WishListView, 'wishes-wish-list')
+router.register('wishes/wish-item',
+                wishes_view.WishItemView, 'wishes-wish-item')
+router.register('user/friendship',
+                user_view.UserFriendshipView, 'user-friendship')
 router.register('user/users', user_view.UserView, 'user-users')
+router.register('user/auth', user_view.AuthView, 'user-auth')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(),
+         name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(),
+         name='token_refresh'),
     path('api/', include(router.urls)),
-    path('', include('user.urls')),
-    path('login/', user_view.Login, name='login'),
-    path('logout/', auth.LogoutView.as_view(template_name='user/index.html'), name='logout'),
-    path('register/', user_view.register, name='register'),
+    path('logout/', auth.LogoutView.as_view(), name='logout'),
 ]

@@ -27,3 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserFindSerializer(serializers.Serializer):
     pattern = serializers.CharField(required=True)
+
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
