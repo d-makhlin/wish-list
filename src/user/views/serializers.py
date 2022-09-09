@@ -30,5 +30,5 @@ class UserFindSerializer(serializers.Serializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField()

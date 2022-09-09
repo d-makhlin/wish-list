@@ -8,10 +8,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+
 from user.views.serializers import UserLoginSerializer
-
 from user.forms import UserRegisterForm
-
 from user.models import User
 from user.services.user_service import UserService
 from user.views.serializers import UserSerializer, UserFindSerializer
@@ -56,8 +55,8 @@ class AuthView(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        user = authenticate(request, username=validated_data.get(
-            'username'), password=validated_data.get('password'))
+        user = self.authenticate(email=validated_data.get(
+            'email'), password=validated_data.get('password'))
         if user is not None:
             login(request, user)
             return Response(status=status.HTTP_200_OK, data={'user_id': user.id})
@@ -71,3 +70,13 @@ class AuthView(ModelViewSet):
             form.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'errors': form.errors})
+
+    def authenticate(self, email=None, password=None, **kwargs):
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return
+        except User.MultipleObjectsReturned:
+            user = User.objects.filter(email=email).order_by('id').first()
+        if user.check_password(password):
+            return user
